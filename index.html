@@ -3,362 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Idle Hacker v1.0 - Minimal</title>
+    <title>Idle Hacker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #ffffff;
-            --text-color: #333333;
-            --primary-accent: #007bff;
-            --light-gray: #f0f0f0;
-            --border-color: #dddddd;
-            --font-sans: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --bg: #ffffff;
+            --accent: #2563eb;
+            --text: #1f2937;
+            --gray-100: #f3f4f6;
+            --gray-300: #d1d5db;
+            --font: 'Segoe UI', system-ui, sans-serif;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-sans);
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            justify-content: center;
             padding: 20px;
+            line-height: 1.5;
         }
 
         .container {
             width: 100%;
-            max-width: 600px;
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
         }
 
         header {
             text-align: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--light-gray);
+            margin-bottom: 2rem;
         }
 
-        h1 {
-            font-size: 2.2rem;
-            color: var(--primary-accent);
+        h1 { font-weight: 800; letter-spacing: -1px; color: var(--accent); }
+
+        .stats {
+            background: var(--gray-100);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
         }
 
-        .stats-panel {
-            margin-bottom: 35px;
-            background: var(--light-gray);
-            padding: 20px;
-            border-radius: 6px;
-        }
+        .stat-val { font-weight: 700; font-size: 1.2rem; }
 
-        .stat-line {
-            font-size: 1.1rem;
-            margin: 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .stat-line i {
-            color: var(--primary-accent);
-        }
-
-        #hack-button {
+        #hack-btn {
             width: 100%;
-            padding: 18px;
-            background-color: var(--primary-accent);
+            padding: 20px;
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 6px;
-            font-family: var(--font-sans);
-            font-size: 1.4rem;
-            font-weight: 600;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
             cursor: pointer;
-            margin-bottom: 35px;
-            transition: background-color 0.2s, transform 0.1s;
+            margin-bottom: 2rem;
+            transition: transform 0.1s;
         }
 
-        #hack-button:hover {
-            background-color: #0056b3;
-        }
+        #hack-btn:active { transform: scale(0.98); }
 
-        #hack-button:active {
-            transform: translateY(1px);
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            display: block;
-            color: var(--primary-accent);
-        }
+        .upgrade-list { display: flex; flex-direction: column; gap: 10px; }
 
         .upgrade-card {
-            background: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+            padding: 12px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: 10px;
+            transition: opacity 0.3s;
         }
 
-        .upgrade-info {
-            flex-grow: 1;
-        }
+        .upgrade-card.hidden { display: none; }
 
-        .upgrade-name {
-            font-weight: 600;
-            font-size: 1.05rem;
-            display: block;
-            margin-bottom: 4px;
-        }
-        .upgrade-name i {
-            color: var(--primary-accent);
-            margin-right: 5px;
-        }
-
-        .upgrade-desc {
-            font-size: 0.9rem;
-            color: #666666;
-        }
+        .upg-info span { display: block; }
+        .upg-name { font-weight: 600; font-size: 0.95rem; }
+        .upg-desc { font-size: 0.75rem; color: #6b7280; }
 
         .buy-btn {
-            background: var(--primary-accent);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 15px;
+            padding: 8px 16px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
-            font-family: var(--font-sans);
-            font-weight: 500;
-            min-width: 110px;
-            transition: background-color 0.2s;
-            white-space: nowrap; /* Zabrání zalomení textu */
+            font-size: 0.85rem;
         }
 
-        .buy-btn:disabled {
-            background-color: #cccccc;
-            color: #888888;
-            cursor: not-allowed;
-        }
+        .buy-btn:not(:disabled):hover { background: var(--accent); color: white; border-color: var(--accent); }
+        .buy-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        .buy-btn:not(:disabled):hover {
-            background-color: #0056b3;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 15px;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
-            .stats-panel {
-                padding: 15px;
-            }
-            .stat-line {
-                font-size: 1rem;
-            }
-            #hack-button {
-                font-size: 1.2rem;
-                padding: 15px;
-            }
-            .section-title {
-                font-size: 1.1rem;
-            }
-            .upgrade-card {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .upgrade-info {
-                margin-bottom: 10px;
-            }
-            .buy-btn {
-                width: 100%;
-                min-width: unset;
-                padding: 12px;
-            }
-        }
+        footer { margin-top: 2rem; text-align: center; font-size: 0.7rem; color: var(--gray-300); }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>IDLE HACKER v1.0</h1>
-        </header>
+<div class="container">
+    <header>
+        <h1>CORE_HACKER</h1>
+    </header>
 
-        <section class="stats-panel">
-            <div class="stat-line"><i class="fas fa-database"></i> Data Packets: <span id="dp-count">0</span></div>
-            <div class="stat-line"><i class="fas fa-bolt"></i> Generation: <span id="dp-per-sec">0</span> DP/s</div>
-            <div class="stat-line"><i class="fas fa-mouse-pointer"></i> Click Power: <span id="dp-per-click">1</span> DP</div>
-        </section>
-
-        <button id="hack-button">
-            <i class="fas fa-laptop-code"></i> HACK SERVER
-        </button>
-
-        <span class="section-title">UPGRADES</span>
-        
-        <div id="upgrades-container">
-            <div class="upgrade-card">
-                <div class="upgrade-info">
-                    <span class="upgrade-name"><i class="fas fa-robot"></i> Basic Botnet (<span id="count-botnet">0</span>)</span>
-                    <span class="upgrade-desc">+1 DP/s per unit</span>
-                </div>
-                <button class="buy-btn" onclick="game.buyUpgrade('botnet')">Cost: <span id="cost-botnet">10</span></button>
-            </div>
-
-            <div class="upgrade-card">
-                <div class="upgrade-info">
-                    <span class="upgrade-name"><i class="fas fa-microchip"></i> Advanced AI (<span id="count-ai">0</span>)</span>
-                    <span class="upgrade-desc">+10 DP per click</span>
-                </div>
-                <button class="buy-btn" onclick="game.buyUpgrade('ai')">Cost: <span id="cost-ai">50</span></button>
-            </div>
-
-            <div class="upgrade-card">
-                <div class="upgrade-info">
-                    <span class="upgrade-name"><i class="fas fa-shield-alt"></i> Encryption Module (<span id="count-enc">0</span>)</span>
-                    <span class="upgrade-desc">+10% total DP/s</span>
-                </div>
-                <button class="buy-btn" onclick="game.buyUpgrade('encryption')">Cost: <span id="cost-encryption">100</span></button>
-            </div>
+    <div class="stats">
+        <div>Packets: <span id="dp-count" class="stat-val">0</span></div>
+        <div style="font-size: 0.9rem; opacity: 0.7;">
+            Per second: <span id="dp-ps">0</span> | Per click: <span id="dp-pc">1</span>
         </div>
     </div>
 
-    <script>
-        const game = {
-            dataPackets: 0,
-            
-            upgrades: {
-                botnet: { count: 0, baseCost: 10, costMult: 1.15 },
-                ai: { count: 0, baseCost: 50, costMult: 1.3 },
-                encryption: { count: 0, baseCost: 100, costMult: 1.5 }
-            },
+    <button id="hack-btn">SEND PACKET</button>
 
-            init() {
-                try {
-                    this.load();
-                } catch (e) {
-                    console.error("Chyba při načítání uložených dat:", e);
-                    // Při chybě načítání vyčistí LocalStorage a začne znovu
-                    localStorage.clear();
-                    alert("Chyba při načítání hry. Progress byl resetován.");
-                }
-                
-                const hackButton = document.getElementById('hack-button');
-                if (hackButton) {
-                    hackButton.addEventListener('click', () => {
-                        this.dataPackets += this.getClickValue();
-                        this.updateUI();
-                    });
-                } else {
-                    console.error("Tlačítko 'Hack Server' nebylo nalezeno!");
-                }
+    <h3 style="margin-bottom: 1rem;">Available Upgrades</h3>
+    <div id="upgrade-area" class="upgrade-list">
+        </div>
 
-                setInterval(() => {
-                    const gain = this.getDpsValue() / 10;
-                    this.dataPackets += gain;
-                    this.updateUI();
-                }, 100);
+    <footer>Progress autosaves to local storage.</footer>
+</div>
 
-                setInterval(() => this.save(), 10000);
-                window.addEventListener('beforeunload', () => this.save());
+<script>
+const game = {
+    dp: 0,
+    upgradesOwned: {}, // ID: count
 
-                this.updateUI(); // Počáteční aktualizace UI
-            },
+    // Definice 30 upgradů (15 pro botnet, 15 pro AI)
+    catalog: [],
 
-            getClickValue() {
-                return 1 + (this.upgrades.ai.count * 10);
-            },
-
-            getDpsValue() {
-                let baseDps = this.upgrades.botnet.count * 1;
-                let multiplier = 1 + (this.upgrades.encryption.count * 0.10);
-                return baseDps * multiplier;
-            },
-
-            getCost(type) {
-                const upg = this.upgrades[type];
-                return Math.floor(upg.baseCost * Math.pow(upg.costMult, upg.count));
-            },
-
-            buyUpgrade(type) {
-                const cost = this.getCost(type);
-                if (this.dataPackets >= cost) {
-                    this.dataPackets -= cost;
-                    this.upgrades[type].count++;
-                    this.updateUI();
-                    this.save(); // Uložit po každém nákupu
-                }
-            },
-
-            updateUI() {
-                // Kontrola existence elementů před aktualizací
-                const dpCountElem = document.getElementById('dp-count');
-                if (dpCountElem) dpCountElem.innerText = Math.floor(this.dataPackets).toLocaleString('cs-CZ');
-
-                const dpPerSecElem = document.getElementById('dp-per-sec');
-                if (dpPerSecElem) dpPerSecElem.innerText = this.getDpsValue().toFixed(1).toLocaleString('cs-CZ');
-
-                const dpPerClickElem = document.getElementById('dp-per-click');
-                if (dpPerClickElem) dpPerClickElem.innerText = this.getClickValue().toLocaleString('cs-CZ');
-
-                for (let key in this.upgrades) {
-                    const cost = this.getCost(key);
-                    const costElem = document.getElementById(`cost-${key}`);
-                    const countElem = document.getElementById(`count-${key}`);
-                    
-                    if (costElem) costElem.innerText = cost.toLocaleString('cs-CZ');
-                    if (countElem) countElem.innerText = this.upgrades[key].count;
-                    
-                    const btn = document.querySelector(`button[onclick*="buyUpgrade('${key}')"]`);
-                    if (btn) btn.disabled = (this.dataPackets < cost);
-                }
-            },
-
-            save() {
-                try {
-                    const saveData = {
-                        dp: this.dataPackets,
-                        upgrades: this.upgrades
-                    };
-                    localStorage.setItem('idleHackerSave', JSON.stringify(saveData));
-                    console.log("Systém: Postup uložen.");
-                } catch (e) {
-                    console.error("Chyba při ukládání do LocalStorage:", e);
-                }
-            },
-
-            load() {
-                const saved = localStorage.getItem('idleHackerSave');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    this.dataPackets = data.dp || 0;
-                    if (data.upgrades) {
-                        // Použít Object.assign pro sloučení, aby se neztratily existující vlastnosti upgrades
-                        Object.assign(this.upgrades, data.upgrades);
-                    }
-                    console.log("Systém: Postup načten.");
-                }
-            }
+    init() {
+        this.generateCatalog();
+        this.load();
+        this.renderUpgrades();
+        
+        document.getElementById('hack-btn').onclick = () => {
+            this.dp += this.getClickPower();
+            this.updateUI();
         };
 
-        window.onload = () => game.init();
-    </script>
+        setInterval(() => {
+            this.dp += (this.getDps() / 10);
+            this.updateUI();
+        }, 100);
+
+        setInterval(() => this.save(), 10000);
+        this.updateUI();
+    },
+
+    generateCatalog() {
+        const nouns = ["Node", "Script", "Daemon", "Proxy", "Server", "Array", "Cloud", "Grid", "Matrix", "Core", "Nexus", "Void", "Engine", "Hive", "Titan"];
+        
+        // 15 Botnetů (Generují DP/s)
+        for(let i=1; i<=15; i++) {
+            this.catalog.push({
+                id: 'b' + i,
+                name: nouns[i-1] + " Botnet",
+                desc: `Passive income +${Math.pow(2, i)} DP/s`,
+                baseCost: Math.pow(10, i) * 0.5,
+                power: Math.pow(2, i),
+                type: 'dps'
+            });
+        }
+        // 15 AI Modulů (Zvyšují klik)
+        for(let i=1; i<=15; i++) {
+            this.catalog.push({
+                id: 'a' + i,
+                name: nouns[i-1] + " AI",
+                desc: `Click power +${Math.pow(3, i)} DP`,
+                baseCost: Math.pow(10, i) * 0.8,
+                power: Math.pow(3, i),
+                type: 'click'
+            });
+        }
+        // Seřadit podle ceny
+        this.catalog.sort((a, b) => a.baseCost - b.baseCost);
+    },
+
+    getClickPower() {
+        let p = 1;
+        this.catalog.filter(u => u.type === 'click').forEach(u => {
+            p += (this.upgradesOwned[u.id] || 0) * u.power;
+        });
+        return p;
+    },
+
+    getDps() {
+        let s = 0;
+        this.catalog.filter(u => u.type === 'dps').forEach(u => {
+            s += (this.upgradesOwned[u.id] || 0) * u.power;
+        });
+        return s;
+    },
+
+    getCurrentCost(u) {
+        const count = this.upgradesOwned[u.id] || 0;
+        return Math.floor(u.baseCost * Math.pow(1.2, count));
+    },
+
+    buy(id) {
+        const u = this.catalog.find(x => x.id === id);
+        const cost = this.getCurrentCost(u);
+        if (this.dp >= cost) {
+            this.dp -= cost;
+            this.upgradesOwned[id] = (this.upgradesOwned[id] || 0) + 1;
+            this.updateUI();
+            this.save();
+        }
+    },
+
+    renderUpgrades() {
+        const container = document.getElementById('upgrade-area');
+        container.innerHTML = '';
+        this.catalog.forEach(u => {
+            const card = document.createElement('div');
+            card.className = 'upgrade-card hidden';
+            card.id = `card-${u.id}`;
+            card.innerHTML = `
+                <div class="upg-info">
+                    <span class="upg-name">${u.name}</span>
+                    <span class="upg-desc">${u.desc}</span>
+                </div>
+                <button class="buy-btn" id="btn-${u.id}" onclick="game.buy('${u.id}')">
+                    ${this.getCurrentCost(u).toLocaleString()} DP
+                </button>
+            `;
+            container.appendChild(card);
+        });
+    },
+
+    updateUI() {
+        document.getElementById('dp-count').innerText = Math.floor(this.dp).toLocaleString();
+        document.getElementById('dp-ps').innerText = this.getDps().toLocaleString();
+        document.getElementById('dp-pc').innerText = this.getClickPower().toLocaleString();
+
+        this.catalog.forEach(u => {
+            const cost = this.getCurrentCost(u);
+            const btn = document.getElementById(`btn-${u.id}`);
+            const card = document.getElementById(`card-${u.id}`);
+            
+            if (btn) {
+                btn.innerText = cost.toLocaleString() + " DP";
+                btn.disabled = this.dp < cost;
+            }
+
+            // Odemknout kartu, pokud na ni hráč skoro má (vypadá to lépe)
+            if (this.dp >= cost * 0.7 || (this.upgradesOwned[u.id] > 0)) {
+                card.classList.remove('hidden');
+            }
+        });
+    },
+
+    save() {
+        localStorage.setItem('hacker_save_v2', JSON.stringify({
+            dp: this.dp,
+            owned: this.upgradesOwned
+        }));
+    },
+
+    load() {
+        const data = JSON.parse(localStorage.getItem('hacker_save_v2'));
+        if (data) {
+            this.dp = data.dp || 0;
+            this.upgradesOwned = data.owned || {};
+        }
+    }
+};
+
+window.onload = () => game.init();
+</script>
+
 </body>
 </html>
