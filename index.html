@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Idle Hacker v1.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --main-green: #00ff41;
+            --dim-green: #008f11;
+            --dark-gray: #1a1a1a;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--main-green);
+            font-family: var(--font-mono);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .terminal-container {
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid var(--dim-green);
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        header {
+            border-bottom: 1px solid var(--dim-green);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background-color: var(--main-green);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .stats-panel {
+            margin-bottom: 30px;
+            background: var(--dark-gray);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .stat-line {
+            font-size: 1.2rem;
+            margin: 5px 0;
+        }
+
+        #hack-button {
+            width: 100%;
+            padding: 20px;
+            background-color: transparent;
+            color: var(--main-green);
+            border: 2px solid var(--main-green);
+            font-family: var(--font-mono);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        #hack-button:hover {
+            background-color: var(--main-green);
+            color: black;
+        }
+
+        #hack-button:active {
+            transform: scale(0.98);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            text-decoration: underline;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .upgrade-card {
+            background: var(--dark-gray);
+            border: 1px solid var(--dim-green);
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upgrade-info {
+            flex-grow: 1;
+        }
+
+        .upgrade-name {
+            font-weight: bold;
+            display: block;
+        }
+
+        .upgrade-desc {
+            font-size: 0.8rem;
+            color: var(--dim-green);
+        }
+
+        .buy-btn {
+            background: transparent;
+            color: var(--main-green);
+            border: 1px solid var(--main-green);
+            padding: 8px 12px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            min-width: 100px;
+        }
+
+        .buy-btn:disabled {
+            border-color: #333;
+            color: #333;
+            cursor: not-allowed;
+        }
+
+        .buy-btn:not(:disabled):hover {
+            background: var(--dim-green);
+            color: white;
+        }
+
+        @media (max-width: 480px) {
+            .upgrade-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .buy-btn {
+                margin-top: 10px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-container">
+        <header>
+            <h1>IDLE_HACKER_OS <span class="cursor"></span></h1>
+        </header>
+
+        <section class="stats-panel">
+            <div class="stat-line"><i class="fas fa-database"></i> Data Packets: <span id="dp-count">0</span></div>
+            <div class="stat-line"><i class="fas fa-bolt"></i> Generation: <span id="dp-per-sec">0</span> DP/s</div>
+            <div class="stat-line"><i class="fas fa-mouse-pointer"></i> Click Power: <span id="dp-per-click">1</span> DP</div>
+        </section>
+
+        <button id="hack-button">
+            <i class="fas fa-terminal"></i> HACK_SERVER
+        </button>
+
+        <span class="section-title">AVAILABLE_UPGRADES</span>
+        
+        <div id="upgrades-container">
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <span class="upgrade-name"><i class="fas fa-robot"></i> Basic Botnet (<span id="count-botnet">0</span>)</span>
+                    <span class="upgrade-desc">+1 DP/s per unit</span>
+                </div>
+                <button class="buy-btn" onclick="game.buyUpgrade('botnet')">Cost: <span id="cost-botnet">10</span></button>
+            </div>
+
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <span class="upgrade-name"><i class="fas fa-microchip"></i> Advanced AI (<span id="count-ai">0</span>)</span>
+                    <span class="upgrade-desc">+10 DP per click</span>
+                </div>
+                <button class="buy-btn" onclick="game.buyUpgrade('ai')">Cost: <span id="cost-ai">50</span></button>
+            </div>
+
+            <div class="upgrade-card">
+                <div class="upgrade-info">
+                    <span class="upgrade-name"><i class="fas fa-user-secret"></i> Encryption (<span id="count-enc">0</span>)</span>
+                    <span class="upgrade-desc">+10% total DP/s</span>
+                </div>
+                <button class="buy-btn" onclick="game.buyUpgrade('encryption')">Cost: <span id="cost-encryption">100</span></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const game = {
+            dataPackets: 0,
+            totalGenerated: 0,
+            
+            upgrades: {
+                botnet: { count: 0, baseCost: 10, costMult: 1.15 },
+                ai: { count: 0, baseCost: 50, costMult: 1.3 },
+                encryption: { count: 0, baseCost: 100, costMult: 1.5 }
+            },
+
+            init() {
+                this.load();
+                this.updateUI();
+                
+                // Click handler
+                document.getElementById('hack-button').addEventListener('click', () => {
+                    this.dataPackets += this.getClickValue();
+                    this.updateUI();
+                });
+
+                // Game Loop (100ms for smoothness)
+                setInterval(() => {
+                    const gain = this.getDpsValue() / 10;
+                    this.dataPackets += gain;
+                    this.updateUI();
+                }, 100);
+
+                // Auto-save every 10 seconds
+                setInterval(() => this.save(), 10000);
+                window.addEventListener('beforeunload', () => this.save());
+            },
+
+            getClickValue() {
+                return 1 + (this.upgrades.ai.count * 10);
+            },
+
+            getDpsValue() {
+                let baseDps = this.upgrades.botnet.count * 1;
+                let multiplier = 1 + (this.upgrades.encryption.count * 0.10);
+                return baseDps * multiplier;
+            },
+
+            getCost(type) {
+                const upg = this.upgrades[type];
+                return Math.floor(upg.baseCost * Math.pow(upg.costMult, upg.count));
+            },
+
+            buyUpgrade(type) {
+                const cost = this.getCost(type);
+                if (this.dataPackets >= cost) {
+                    this.dataPackets -= cost;
+                    this.upgrades[type].count++;
+                    this.updateUI();
+                    this.save();
+                }
+            },
+
+            updateUI() {
+                document.getElementById('dp-count').innerText = Math.floor(this.dataPackets).toLocaleString();
+                document.getElementById('dp-per-sec').innerText = this.getDpsValue().toFixed(1);
+                document.getElementById('dp-per-click').innerText = this.getClickValue();
+
+                for (let key in this.upgrades) {
+                    const cost = this.getCost(key);
+                    document.getElementById(`cost-${key}`).innerText = cost.toLocaleString();
+                    document.getElementById(`count-${key}`).innerText = this.upgrades[key].count;
+                    
+                    const btn = document.querySelector(`button[onclick="game.buyUpgrade('${key}')"]`);
+                    btn.disabled = this.dataPackets < cost;
+                }
+            },
+
+            save() {
+                const saveData = {
+                    dp: this.dataPackets,
+                    upgrades: this.upgrades
+                };
+                localStorage.setItem('idleHackerSave', JSON.stringify(saveData));
+                console.log("System: Progress saved to LocalStorage.");
+            },
+
+            load() {
+                const saved = localStorage.getItem('idleHackerSave');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    this.dataPackets = data.dp || 0;
+                    if (data.upgrades) {
+                        for (let key in data.upgrades) {
+                            if (this.upgrades[key]) {
+                                this.upgrades[key].count = data.upgrades[key].count;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Initialize game on load
+        window.onload = () => game.init();
+    </script>
+</body>
+  </html>
+
